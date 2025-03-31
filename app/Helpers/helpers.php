@@ -7,13 +7,13 @@ if (!function_exists('_pr')) {
      * @param mixed $data
      * @param bool $exit (optional) Default: false
      */
-    function _pr($data=[], $exit = true)
+    function _pr($data=[], $exit = 1)
     {
-        echo '<pre style="background: #282c34; color: #61dafb; padding: 10px; border-radius: 5px;">';
+        echo '<pre>';
         print_r($data);
         echo '</pre>';
 
-        if ($exit) {
+        if ($exit==1) {
             exit; // Stop execution if true
         }
     }

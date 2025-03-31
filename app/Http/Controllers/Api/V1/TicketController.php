@@ -11,6 +11,7 @@ use App\Http\Resources\V1\TicketResource;
 
 class TicketController extends ApiController
 {
+    
     /**
      * Display a listing of the resource.
      */
@@ -69,4 +70,6 @@ class TicketController extends ApiController
     {
         //
     }
+
+
 }
