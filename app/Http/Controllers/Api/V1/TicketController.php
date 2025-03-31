@@ -15,7 +15,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 class TicketController extends ApiController
 {
     use ApiResponses;
-    
+
     /**
      * Display a listing of the resource.
      */
@@ -27,10 +27,7 @@ class TicketController extends ApiController
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
-    {
-        
-    }
+    public function create() {}
 
     /**
      * Store a newly created resource in storage.
@@ -39,7 +36,6 @@ class TicketController extends ApiController
     {
         try {
             User::findOrFail($request->input('data.relationships.author.data.id'));
-             
         } catch (ModelNotFoundException $e) {
             return $this->ok('User Not Found', [
                 'error' => 'The provided user id does not exists'
@@ -59,12 +55,18 @@ class TicketController extends ApiController
     /**
      * Display the specified resource.
      */
-    public function show(Ticket $ticket)
-    {
-        if ($this->include('author')) {
-            return new TicketResource($ticket->load('author'));
-        }      
-        return new TicketResource($ticket);
+    public function show($ticket_id)
+    {   
+        try {
+            $ticket = Ticket::findOrFail($ticket_id);
+            if ($this->include('author')) {
+                return new TicketResource($ticket->load('author'));
+            }
+            return new TicketResource($ticket);
+        } catch (ModelNotFoundException $e) {
+            return $this->error('Ticket can not be found', 404);
+        }        
+        
     }
 
     /**
@@ -86,10 +88,14 @@ class TicketController extends ApiController
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Ticket $ticket)
+    public function destroy($ticket_id)
     {
-        //
+        try {
+            $ticket =  Ticket::findOrFail($ticket_id);
+            $ticket->delete();
+            return $this->ok('Ticket deleted sucessfully');
+        } catch (ModelNotFoundException $e) {
+            return $this->error('Ticket can not be found', 404);
+        }
     }
-
-
 }

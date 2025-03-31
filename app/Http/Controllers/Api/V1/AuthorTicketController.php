@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Filters\V1\TicketFilter;
 use App\Http\Resources\V1\TicketResource;
 use App\Models\Ticket;
+use App\Traits\ApiResponses;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use App\Http\Requests\Api\V1\StoreTicketRequest;
 
@@ -13,10 +15,12 @@ use App\Http\Requests\Api\V1\StoreTicketRequest;
 
 class AuthorTicketController extends Controller
 {
-    public function index($author_id, TicketFilter $filters) {
-        
+
+    use ApiResponses;
+    public function index($author_id, TicketFilter $filters)
+    {
+
         return TicketResource::collection(Ticket::where('user_id', $author_id)->filter($filters)->paginate());
-        
     }
 
     /**
@@ -32,5 +36,19 @@ class AuthorTicketController extends Controller
         ];
 
         return new TicketResource(Ticket::create($model));
+    }
+
+    public function destroy($author_id, $ticket_id)
+    {
+        try {
+            $ticket =  Ticket::findOrFail($ticket_id);
+            if ($ticket->user_id == $author_id) {
+                $ticket->delete();
+                return $this->ok('Ticket deleted sucessfully');
+            }          
+        } catch (ModelNotFoundException $e) {
+            //
+        }
+        return $this->error('Ticket can not be found', 404);
     }
 }
