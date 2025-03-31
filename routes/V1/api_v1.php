@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\V1\AuthorTicketController;
 use App\Http\Controllers\Api\V1\TicketController;
 use App\Http\Controllers\Api\V1\AuthorController;
 use Illuminate\Http\Request;
@@ -10,5 +11,6 @@ use App\Models\Ticket;
 Route::prefix('v1')->middleware('auth:sanctum')->group(function() {
     Route::apiResource('tickets', TicketController::class);
     Route::apiResource('authors', AuthorController::class);
-});
+    Route::apiResource('authors.tickets', AuthorTicketController::class);
 
+});
