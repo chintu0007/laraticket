@@ -4,16 +4,8 @@ namespace App\Http\Requests\Api\V1;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class ReplaceTicketRequst extends FormRequest
+class ReplaceTicketRequst extends BaseTicketRequst
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
-    public function authorize(): bool
-    {
-        return true;
-    }
-
     /**
      * Get the validation rules that apply to the request.
      *
@@ -30,12 +22,5 @@ class ReplaceTicketRequst extends FormRequest
         
         return $rules;
     }
-
-
-    public function messages()
-    {
-        return [
-            'data.attributes.status' => 'The data.attributes.status is invalid. Please use A, C, H, X'
-        ];
-    }
+    
 }

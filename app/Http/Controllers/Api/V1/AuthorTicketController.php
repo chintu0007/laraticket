@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use App\Http\Filters\V1\TicketFilter;
 use App\Http\Requests\Api\V1\ReplaceTicketRequst;
+use App\Http\Requests\Api\V1\UpdateTicketRequest;
 use App\Http\Resources\V1\TicketResource;
 use App\Models\Ticket;
 use App\Traits\ApiResponses;
@@ -14,10 +15,9 @@ use App\Http\Requests\Api\V1\StoreTicketRequest;
 
 
 
-class AuthorTicketController extends Controller
+class AuthorTicketController extends ApiController
 {
-
-    use ApiResponses;
+    
     public function index($author_id, TicketFilter $filters)
     {
 
@@ -58,14 +58,8 @@ class AuthorTicketController extends Controller
         //PUT      
         try {            
             $ticket = Ticket::findOrFail($ticket_id);
-            if ($ticket->user_id == $author_id) {                
-                $model = [
-                    'title' => $request->input('data.attributes.title'),
-                    'description' => $request->input('data.attributes.description'),
-                    'status' => $request->input('data.attributes.status'),
-                    'user_id' => $request->input('data.relationships.author.data.id')
-                ];    
-                $ticket->update($model);    
+            if ($ticket->user_id == $author_id) {
+                $ticket->update($request->mappedAttributes());    
                 return new TicketResource($ticket);
             }  
             
@@ -73,5 +67,22 @@ class AuthorTicketController extends Controller
         } catch (ModelNotFoundException $e) {
             return $this->error('Ticket can not be found', 404);
         }        
+    }
+
+    public function update(UpdateTicketRequest $request, $author_id, $ticket_id)
+    {
+        // PATCH
+        try {            
+            $ticket = Ticket::findOrFail($ticket_id);
+            if ($ticket->user_id == $author_id) {
+                $ticket->update($request->mappedAttributes());    
+                return new TicketResource($ticket);
+            }  
+            
+            //TODO: ticket doesn't belong to user 
+        } catch (ModelNotFoundException $e) {
+            return $this->error('Ticket can not be found', 404);
+        }  
+
     }
 }

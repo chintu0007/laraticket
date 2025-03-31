@@ -15,24 +15,13 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class TicketController extends ApiController
 {
-    use ApiResponses;
-
-    /**
-     * Display a listing of the resource.
-     */
     public function index(TicketFilter $filters)
     {
         return TicketResource::collection(Ticket::filter($filters)->paginate());
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create() {}
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(StoreTicketRequest $request)
     {
         try {
@@ -42,20 +31,9 @@ class TicketController extends ApiController
                 'error' => 'The provided user id does not exists'
             ]);
         }
-
-        $model = [
-            'title' => $request->input('data.attributes.title'),
-            'description' => $request->input('data.attributes.description'),
-            'status' => $request->input('data.attributes.status'),
-            'user_id' => $request->input('da    ta.relationships.author.data.id')
-        ];
-
-        return new TicketResource(Ticket::create($model));
+        return new TicketResource(Ticket::create($request->mappedAttributes()));
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show($ticket_id)
     {   
         try {
@@ -70,45 +48,35 @@ class TicketController extends ApiController
         
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(Ticket $ticket)
     {
         //
     }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateTicketRequest $request, Ticket $ticket)
+    public function update(UpdateTicketRequest $request, $ticket_id)
     {
-        // PATCH 
+        // PATCH
+        try {
+            $ticket = Ticket::findOrFail($ticket_id);            
+            $ticket->update($request->mappedAttributes());    
+            return new TicketResource($ticket);
+            
+        } catch (ModelNotFoundException $e) {
+            return $this->error('Ticket can not be found', 404);
+        }
+
     }
 
     public function replace(ReplaceTicketRequst $request, $ticket_id) {
         //PUT
         try {
-
             $ticket = Ticket::findOrFail($ticket_id);
-            $model = [
-                'title' => $request->input('data.attributes.title'),
-                'description' => $request->input('data.attributes.description'),
-                'status' => $request->input('data.attributes.status'),
-                'user_id' => $request->input('data.relationships.author.data.id')
-            ];
-
-            $ticket->update($model);    
-            return new TicketResource($ticket);
-            
+            $ticket->update($request->mappedAttributes());    
+            return new TicketResource($ticket);            
         } catch (ModelNotFoundException $e) {
             return $this->error('Ticket can not be found', 404);
         }        
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy($ticket_id)
     {
         try {
