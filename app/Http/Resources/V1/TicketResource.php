@@ -31,7 +31,7 @@ class TicketResource extends JsonResource
                 'createdAt' => $this->created_at,
                 'updatedAt' => $this->updated_at
             ],
-            'relationship' => [
+            'relationships' => [
                 'author' => [
                     'data' => [
                         'type' => 'author',
