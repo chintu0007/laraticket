@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use App\Http\Filters\V1\TicketFilter;
+use App\Http\Requests\Api\V1\ReplaceTicketRequst;
 use App\Http\Resources\V1\TicketResource;
 use App\Models\Ticket;
 use App\Traits\ApiResponses;
@@ -50,5 +51,27 @@ class AuthorTicketController extends Controller
             //
         }
         return $this->error('Ticket can not be found', 404);
+    }
+
+    //put
+    public function replace(ReplaceTicketRequst $request, $author_id, $ticket_id) {
+        //PUT      
+        try {            
+            $ticket = Ticket::findOrFail($ticket_id);
+            if ($ticket->user_id == $author_id) {                
+                $model = [
+                    'title' => $request->input('data.attributes.title'),
+                    'description' => $request->input('data.attributes.description'),
+                    'status' => $request->input('data.attributes.status'),
+                    'user_id' => $request->input('data.relationships.author.data.id')
+                ];    
+                $ticket->update($model);    
+                return new TicketResource($ticket);
+            }  
+            
+            //TODO: ticket doesn't belong to user 
+        } catch (ModelNotFoundException $e) {
+            return $this->error('Ticket can not be found', 404);
+        }        
     }
 }
