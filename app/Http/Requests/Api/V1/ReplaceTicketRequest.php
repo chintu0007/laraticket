@@ -4,7 +4,7 @@ namespace App\Http\Requests\Api\V1;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class ReplaceTicketRequst extends BaseTicketRequst
+class ReplaceTicketRequest extends BaseTicketRequst
 {
     /**
      * Get the validation rules that apply to the request.

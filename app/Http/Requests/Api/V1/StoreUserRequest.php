@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Api;
+namespace App\Http\Requests\Api\V1;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class AuthLoginRequest extends FormRequest
+class StoreUserRequest extends BaseUserRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,8 +22,10 @@ class AuthLoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => 'required|string|email',
-            'password' => 'required|string|min:8'
+            'data.attributes.name' => 'required|string',
+            'data.attributes.email' => 'required|email',
+            'data.attributes.isManager' => 'required|boolean',
+            'data.attributes.password' => 'required|string',
         ];
     }
 }

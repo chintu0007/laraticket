@@ -1,6 +1,7 @@
 <?php
 
 use App\Providers\TicketServiceProvider;
+use App\Providers\UserServiceProvider;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -10,7 +11,7 @@ return Application::configure(basePath: dirname(__DIR__))
     // ->withAuthorization(function ($gate) {
     //     $gate->policy(Ticket::class, TicketPolicy::class); // Register the policy
     // })
-    ->withProviders([TicketServiceProvider::class]) // Register custom PolicyServiceProvider
+    ->withProviders([TicketServiceProvider::class, UserServiceProvider::class]) // Register custom PolicyServiceProvider
     ->withRouting(
         web: __DIR__ . '/../routes/web.php',
         api: [
